@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from models import Base
-from database import engine
-from routes import animals, applications, users
+from app.models import Base
+from app.database import engine
+from app.routes import animals, applications, users
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.add_middleware(
