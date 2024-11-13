@@ -29,7 +29,7 @@ def create_animal(animal: AnimalCreate, db: Session = Depends(get_db)):
     )
     db.add(db_animal)
     db.commit()
-    db.refresh(db_animal)
+    #db.refresh(db_animal)
     return {"message": "Animal entry created successfully", "animal_id": db_animal.tag_id}
 
 # Route to get all animal entries
@@ -57,7 +57,7 @@ def update_animal(tag_id: int, animal: AnimalUpdate, db: Session = Depends(get_d
     db_animal.photos = db_animal.photos
     db_animal.available=animal.available
     db.commit()
-    db.refresh(db_animal)
+    #db.refresh(db_animal)
     return {"message": "Animal entry updated successfully", "animal_id": db_animal.tag_id}
 
 # Route to delete an animal entry

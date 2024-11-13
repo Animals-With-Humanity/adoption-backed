@@ -27,7 +27,7 @@ def create_application(application: ApplicationCreate, db: Session = Depends(get
     )
     db.add(db_application)
     db.commit()
-    db.refresh(db_application)
+    #db.refresh(db_application)
     return {"message": "Application created successfully", "application_id": db_application.tag_id}
 
 # Route to get all applications
@@ -55,7 +55,7 @@ def update_application(tag_id: int, application: ApplicationUpdate, db: Session 
     db_application.tag_id = db_application.tag_id
     db_application.status = application.status
     db.commit()
-    db.refresh(db_application)
+    #db.refresh(db_application)
     return {"message": "Application updated successfully", "application_id": db_application.id}
 
 # Route to delete an application

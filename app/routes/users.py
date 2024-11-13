@@ -42,7 +42,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     )
     db.add(new_user)
     db.commit()
-    db.refresh(new_user)
+    #db.refresh(new_user)
     return new_user
 
 # Route to get all users
@@ -67,7 +67,7 @@ def update_user(user_id: int, user: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     db_user.status=user.status
     db.commit()
-    db.refresh(db_user)
+    #db.refresh(db_user)
     return db_user
 
 # Route to delete a user
