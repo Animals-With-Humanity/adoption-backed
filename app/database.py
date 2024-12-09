@@ -4,7 +4,8 @@ from sqlalchemy.orm import sessionmaker
 
 # SQLALCHEMY_DATABASE_URL should be changed to your database URL.
 # Example for SQLite:
-SQLALCHEMY_DATABASE_URL =  "sqlite:///./app.db"
+SQLALCHEMY_DATABASE_URL = "postgresql://neondb_owner:W3FMILeyHkP0@ep-long-union-a5mh444q-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+#"sqlite:///./app.db"
 #"mysql+pymysql://sql12744654:aWGnxPRe1l@sql12.freesqldatabase.com:3306/sql12744654"
 # Example for PostgreSQL:
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost/dbname"
