@@ -16,8 +16,10 @@ class Application(Base):
     adopter_name = Column(String(225))
     occupation = Column(String(225))
     tag_id = Column(Integer, ForeignKey('animals.tag_id'))
-    status = Column(Enum('Pending', 'Approved', 'Denied', name='status_enum'), default='Pending')
     animal = relationship("Animal")
+    name= Column(String)
+    contact=Column(String)
+    status = Column(Enum('Pending', 'Approved', 'Denied', name='status_enum'), default='Pending')
 
 class User(Base):
     __tablename__ = 'users'

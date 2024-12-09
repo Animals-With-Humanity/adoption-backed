@@ -52,9 +52,6 @@ def update_animal(tag_id: int, animal: AnimalUpdate, db: Session = Depends(get_d
     db_animal = db.query(Animal).filter(Animal.tag_id == tag_id).first()
     if not db_animal:
         raise HTTPException(status_code=404, detail="Animal not found") 
-    db_animal.tag_id = db_animal.tag_id
-    db_animal.animal_type = db_animal.animal_type
-    db_animal.photos = db_animal.photos
     db_animal.available=animal.available
     db.commit()
     #db.refresh(db_animal)

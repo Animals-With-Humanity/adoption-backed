@@ -3,7 +3,7 @@ from app.models import Base
 from app.database import engine
 from app.routes import animals, applications, users
 from fastapi.middleware.cors import CORSMiddleware
-app = FastAPI()
+app = FastAPI(docs_url="/")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins; change this to specific origins for better security
@@ -19,5 +19,6 @@ app.include_router(animals.router, prefix="/animals")
 app.include_router(applications.router, prefix="/applications")
 app.include_router(users.router, prefix="/users")
 if __name__ == '__main__':
+    
     import uvicorn
     uvicorn.run(app)
