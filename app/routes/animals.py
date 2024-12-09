@@ -12,6 +12,8 @@ router = APIRouter()
 class AnimalCreate(BaseModel):
     tag_id: int
     animal_type: str
+    caretaker: str
+    contact: str
     photos: str  # Could be a URL or path to the photos
     available:bool
 
@@ -24,6 +26,8 @@ def create_animal(animal: AnimalCreate, db: Session = Depends(get_db)):
     db_animal = Animal(
         tag_id=animal.tag_id,
         animal_type=animal.animal_type,
+        caretaker=animal.caretaker,
+        contact=animal.contact,
         photos=animal.photos,
         available=animal.available
     )
@@ -36,7 +40,7 @@ def create_animal(animal: AnimalCreate, db: Session = Depends(get_db)):
 @router.get("/animals/", response_model=List[dict])
 def get_all_animals(db: Session = Depends(get_db)):
     animals = db.query(Animal).all()
-    return [{"tag_id": animal.tag_id, "animal_type": animal.animal_type, "photos": animal.photos,"avaliable":animal.available} for animal in animals]
+    return [{"tag_id": animal.tag_id, "animal_type": animal.animal_type,"Caretaker": animal.caretaker,"contact":animal.contact, "photos": animal.photos,"avaliable":animal.available} for animal in animals]
 
 # Route to get a single animal entry by ID
 @router.get("/animals/{tag_id}", response_model=dict)

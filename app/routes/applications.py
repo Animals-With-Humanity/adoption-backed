@@ -11,11 +11,14 @@ router = APIRouter()
 
 # Pydantic schema for an application
 class ApplicationCreate(BaseModel):
-    name: str
-    occupation: str
     tag_id: int
     name: str
-    contact: str    
+    contact: str
+    whatsapp: str
+    address: str    
+    occupation: str
+    pets: bool
+    hometype: str
 class ApplicationUpdate(BaseModel):
     status:str
 
