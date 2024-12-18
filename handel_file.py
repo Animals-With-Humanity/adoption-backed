@@ -1,7 +1,7 @@
 import cloudinary
 import cloudinary.uploader
 from fastapi import UploadFile
-from PIL import Image, ImageTk
+#from PIL import Image, ImageTk
 import docx
 from docx.shared import Inches,Cm,RGBColor,Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH 
