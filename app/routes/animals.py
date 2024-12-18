@@ -1,35 +1,45 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,Form,File,UploadFile
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Animal
 from pydantic import BaseModel
 from typing import List
-
+from handel_file import animal_upload
 # Create the FastAPI router
 router = APIRouter()
 
 # Pydantic schema for animal data
-class AnimalCreate(BaseModel):
-    tag_id: int
-    animal_type: str
-    caretaker: str
-    contact: str
-    photos: str  # Could be a URL or path to the photos
-    available:bool
+#class AnimalCreate(BaseModel):
+#    tag_id: int
+#    gender: str
+#    fitness: str
+#    vaccination: bool
+#    sterilisation: bool
+#    animal_type: str
+#    caretaker: str
+#    contact: str
+#    photos: str  # Could be a URL or path to the photos
 
 class AnimalUpdate(BaseModel):
     available:bool
 
 # Route to create a new animal entry
 @router.post("/animals/", response_model=dict)
-def create_animal(animal: AnimalCreate, db: Session = Depends(get_db)):
+def create_animal(tag_id: int = Form(...),gender: str=Form(...),age: int = Form(...),fitness: str= Form(...),vaccination: bool=Form(...),
+                  sterilisation:bool=Form(...),animal_type: str = Form(...),
+                  caretaker: str = Form(...),contact: str = Form(...),file: UploadFile=File(...) ,db: Session = Depends(get_db)):#UploadFile = File(...)
+    file_url= animal_upload(file)
     db_animal = Animal(
-        tag_id=animal.tag_id,
-        animal_type=animal.animal_type,
-        caretaker=animal.caretaker,
-        contact=animal.contact,
-        photos=animal.photos,
-        available=animal.available
+        tag_id=tag_id,
+        gender=gender,
+        age=age,
+        fitness=fitness,
+        vaccination=vaccination,
+        sterilisation=sterilisation,
+        animal_type=animal_type,
+        caretaker=caretaker,
+        contact=contact,
+        photos=file_url  # Store uploaded file URL
     )
     db.add(db_animal)
     db.commit()
@@ -48,7 +58,17 @@ def get_animal(tag_id: int, db: Session = Depends(get_db)):
     animal = db.query(Animal).filter(Animal.tag_id == tag_id).first()
     if not animal:
         raise HTTPException(status_code=404, detail="Animal not found")
-    return {"tag_id": animal.tag_id, "animal_type": animal.animal_type, "photos": animal.photos}
+    return {"tag_id":animal.tag_id,
+            "age":animal.age,
+            "type":animal.animal_type,
+            "gender":animal.gender,
+            "fitness":animal.fitness,
+            "sterilisation":animal.sterilisation,
+            "vaccination":animal.vaccination,
+            "caretaker":animal.caretaker,
+            "contact":animal.contact,
+            "photos":animal.photos,
+            "avaliable":animal.available}
 
 # Route to update an animal entry
 @router.put("/animals/{tag_id}", response_model=dict)

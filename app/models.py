@@ -6,6 +6,11 @@ class Animal(Base):
     __tablename__ = 'animals'
     #id = Column(Integer, primary_key=True, index=True)
     tag_id = Column(Integer, primary_key=True,unique=True, index=True)
+    gender=Column(Enum('Male','Female','Not sure'),default="Not sure")
+    age=Column(Integer)
+    fitness=Column(String)
+    vaccination=Column(Boolean)
+    sterilisation=Column(Boolean)
     animal_type = Column(String(225))
     caretaker = Column(String,nullable=False)
     contact = Column(String)
@@ -24,6 +29,8 @@ class Application(Base):
     occupation = Column(String(225))
     pets = Column(Boolean,default=False)
     homeType = Column(String)
+    adopter_image=Column(String)
+    adopter_doc=Column(String)
     status = Column(Enum('Pending', 'Approved', 'Denied', name='status_enum'), default='Pending')
 
 class User(Base):
