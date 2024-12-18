@@ -29,7 +29,6 @@ def animal_upload(File: UploadFile):
         )
 
         # Extract the URL from the upload result
-        print(upload_result)
         return upload_result["secure_url"]
     except Exception as e:
         print(f"Error uploading to Cloudinary: {e}")
