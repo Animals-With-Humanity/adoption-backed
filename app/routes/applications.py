@@ -5,7 +5,7 @@ from app.models import Application
 from pydantic import BaseModel
 from typing import List
 from app.models import Animal
-from handel_file import Write_form,adoptor_upload
+from handel_file import adoptor_upload
 # Create the FastAPI router
 router = APIRouter()
 
@@ -35,8 +35,8 @@ def create_application(tag_id: int = Form(...),
                        adopter_image: UploadFile = File(...),
                        adopter_doc: UploadFile = File(...),
                        db: Session = Depends(get_db)):
-    img="cloud"#adoptor_upload(adopter_image)
-    doc="cloud"#adoptor_upload(adopter_doc)
+    img="www.example.com/sample.jpg"#adoptor_upload(adopter_image)
+    doc="www.example.com/sample.jpg"#adoptor_upload(adopter_doc)
     db_application = Application(
         tag_id=tag_id,
         adopter_name=name,

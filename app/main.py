@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.models import Base
 from app.database import engine
-from app.routes import animals, applications, users
+from app.routes import animals, applications, users, form
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(docs_url="/")
 app.add_middleware(
@@ -18,6 +18,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(animals.router, prefix="/animals")
 app.include_router(applications.router, prefix="/applications")
 app.include_router(users.router, prefix="/users")
+app.include_router(form.router, prefix="/form")
 if __name__ == '__main__':
     
     import uvicorn

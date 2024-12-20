@@ -4,7 +4,7 @@ from app.database import get_db
 from app.models import Animal
 from pydantic import BaseModel
 from typing import List
-from handel_file import animal_upload
+from handel_file import animal_upload,caretaker_upload
 # Create the FastAPI router
 router = APIRouter()
 
@@ -27,8 +27,11 @@ class AnimalUpdate(BaseModel):
 @router.post("/animals/", response_model=dict)
 def create_animal(tag_id: int = Form(...),gender: str=Form(...),age: int = Form(...),fitness: str= Form(...),vaccination: bool=Form(...),
                   sterilisation:bool=Form(...),animal_type: str = Form(...),
-                  caretaker: str = Form(...),contact: str = Form(...),file: UploadFile=File(...) ,db: Session = Depends(get_db)):#UploadFile = File(...)
-    file_url= animal_upload(file)
+                  caretaker: str = Form(...),contact: str = Form(...),whatsapp: str=Form(...),address:str=Form(...),social: str=Form(...),
+                  occupation: str=Form(...),animal: UploadFile=File(...) ,caretaker_image: UploadFile=File(...) ,document: UploadFile=File(...) ,db: Session = Depends(get_db)):#UploadFile = File(...)
+    file_url= animal_upload(animal)
+    caretaker_image_address="www.example.com/sample.jpg"#caretaker_upload(caretaker_image)
+    caretaker_docs="www.example.com/sample.jpg"#caretaker_upload(document)
     db_animal = Animal(
         tag_id=tag_id,
         gender=gender,
@@ -39,6 +42,12 @@ def create_animal(tag_id: int = Form(...),gender: str=Form(...),age: int = Form(
         animal_type=animal_type,
         caretaker=caretaker,
         contact=contact,
+        caretaker_whatsapp=whatsapp,
+        caretaker_add=address,
+        caretaker_social=social,
+        caretaker_occ=occupation,
+        caretaker_image=caretaker_image_address,
+        caretaker_doc=caretaker_docs,
         photos=file_url  # Store uploaded file URL
     )
     db.add(db_animal)

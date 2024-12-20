@@ -14,6 +14,12 @@ class Animal(Base):
     animal_type = Column(String(225))
     caretaker = Column(String,nullable=False)
     contact = Column(String)
+    caretaker_whatsapp=Column(String)
+    caretaker_add = Column(String)
+    caretaker_social=Column(String)
+    caretaker_occ=Column(String)
+    caretaker_image=Column(String)
+    caretaker_doc=Column(String)
     photos = Column(String(225))
     available = Column(Boolean, default=True)
 
