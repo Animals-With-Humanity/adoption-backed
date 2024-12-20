@@ -29,7 +29,7 @@ def create_animal(tag_id: int = Form(...),gender: str=Form(...),age: int = Form(
                   sterilisation:bool=Form(...),animal_type: str = Form(...),
                   caretaker: str = Form(...),contact: str = Form(...),whatsapp: str=Form(...),address:str=Form(...),social: str=Form(...),
                   occupation: str=Form(...),animal: UploadFile=File(...) ,caretaker_image: UploadFile=File(...) ,document: UploadFile=File(...) ,db: Session = Depends(get_db)):#UploadFile = File(...)
-    file_url= animal_upload(animal)
+    file_url= "www.example.com/sample.jpg"#animal_upload(animal)
     caretaker_image_address="www.example.com/sample.jpg"#caretaker_upload(caretaker_image)
     caretaker_docs="www.example.com/sample.jpg"#caretaker_upload(document)
     db_animal = Animal(
