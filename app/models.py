@@ -16,7 +16,7 @@ class Animal(Base):
     contact = Column(String)
     caretaker_whatsapp=Column(String)
     caretaker_add = Column(String)
-    caretaker_social=Column(String)
+    caretaker_social=Column(String) 
     caretaker_occ=Column(String)
     caretaker_image=Column(String)
     caretaker_doc=Column(String)
@@ -31,13 +31,24 @@ class Application(Base):
     adopter_name = Column(String(225))
     contact=Column(String)
     whatsapp = Column(String)
+    Email = Column(String)
+    homeType = Column(String)
     Address = Column(String)
     occupation = Column(String(225))
-    pets = Column(Boolean,default=False)
-    homeType = Column(String)
     adopter_image=Column(String)
     adopter_doc=Column(String)
     status = Column(Enum('Pending', 'Approved', 'Denied', name='status_enum'), default='Pending')
+
+class GenralInfo(Base):
+    __tablename__ ="genralinfo"
+    track_id = Column(Integer, primary_key=True)
+    tag_id=Column(Integer, ForeignKey('animals.tag_id'))
+    application_id=Column(Integer,ForeignKey('applications.id'))
+    application=relationship("Application")
+    plans=Column(String)
+    pets=Column(String)
+    alone=Column(String)
+    temp_caretaker=Column(String)
 
 class User(Base):
     __tablename__ = 'users'
