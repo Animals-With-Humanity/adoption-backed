@@ -19,7 +19,6 @@ class Animal(Base):
     caretaker_social=Column(String) 
     caretaker_occ=Column(String)
     caretaker_image=Column(String)
-    caretaker_doc=Column(String)
     photos = Column(String(225))
     available = Column(Boolean, default=True)
 
@@ -37,6 +36,7 @@ class Application(Base):
     occupation = Column(String(225))
     adopter_image=Column(String)
     adopter_doc=Column(String)
+    incamp=Column(Boolean)
     status = Column(Enum('Pending', 'Approved', 'Denied', name='status_enum'), default='Pending')
 
 class GenralInfo(Base):

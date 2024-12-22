@@ -31,11 +31,10 @@ def create_animal(tag_id: int = Form(...),gender: str=Form(...),
                   caretaker: str = Form(...),contact: str = Form(...),whatsapp: str=Form(...),
                   address:str=Form(...),social: str=Form(...),occupation: str=Form(...),
                   animal: UploadFile=File(...) ,caretaker_image: UploadFile=File(...) ,
-                  document: UploadFile=File(...) ,db: Session = Depends(get_db)):
+                  db: Session = Depends(get_db)):
     
-    file_url= "www.example.com/sample.jpg"#animal_upload(animal)
-    caretaker_image_address="www.example.com/sample.jpg"#caretaker_upload(caretaker_image)
-    caretaker_docs="www.example.com/sample.jpg"#caretaker_upload(document)
+    file_url= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStojBm8VLxBVE0Tjng7MyDjKqgCLVJJ9q-KA2s9joNy2RHWn8MezjmVALmsZhvzKb3tynRl15zfwBmZjnmYBOh0A"#animal_upload(animal)
+    caretaker_image_address="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQG3W2vZAjMKZNvqCzPLssnlYxd116pEKOVRp3kL5NCh8doKhjF_59Q2hzS45Amne0cOKJucJLqaExp0lShLtzYxfHgmZz3iRGLF3CW7_9"#caretaker_upload(caretaker_image)
     db_animal = Animal(
         tag_id=tag_id,
         gender=gender,
@@ -51,8 +50,8 @@ def create_animal(tag_id: int = Form(...),gender: str=Form(...),
         caretaker_social=social,
         caretaker_occ=occupation,
         caretaker_image=caretaker_image_address,
-        caretaker_doc=caretaker_docs,
         photos=file_url  # Store uploaded file URL
+
     )
     db.add(db_animal)
     db.commit()
