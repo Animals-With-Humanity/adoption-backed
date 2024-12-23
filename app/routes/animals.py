@@ -25,7 +25,7 @@ class AnimalUpdate(BaseModel):
 
 # Route to create a new animal entry
 @router.post("/animals/", response_model=dict)
-def create_animal(tag_id: int = Form(...),gender: str=Form(...),
+def create_animal(gender: str=Form(...),
                   age: int = Form(...),fitness: str= Form(...),vaccination: bool=Form(...),
                   sterilisation:bool=Form(...),animal_type: str = Form(...),
                   caretaker: str = Form(...),contact: str = Form(...),whatsapp: str=Form(...),
@@ -36,7 +36,6 @@ def create_animal(tag_id: int = Form(...),gender: str=Form(...),
     file_url= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStojBm8VLxBVE0Tjng7MyDjKqgCLVJJ9q-KA2s9joNy2RHWn8MezjmVALmsZhvzKb3tynRl15zfwBmZjnmYBOh0A"#animal_upload(animal)
     caretaker_image_address="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQG3W2vZAjMKZNvqCzPLssnlYxd116pEKOVRp3kL5NCh8doKhjF_59Q2hzS45Amne0cOKJucJLqaExp0lShLtzYxfHgmZz3iRGLF3CW7_9"#caretaker_upload(caretaker_image)
     db_animal = Animal(
-        tag_id=tag_id,
         gender=gender,
         age=age,
         fitness=fitness,
