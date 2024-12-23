@@ -36,7 +36,7 @@ class Application(Base):
     occupation = Column(String(225))
     adopter_image=Column(String)
     adopter_doc=Column(String)
-    incamp=Column(Boolean)
+    incamp=Column(String)
     status = Column(Enum('Pending', 'Approved', 'Denied', name='status_enum'), default='Pending')
 
 class GenralInfo(Base):
