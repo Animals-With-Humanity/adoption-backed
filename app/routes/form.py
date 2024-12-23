@@ -36,7 +36,11 @@ def Decline_request(application_id: int,info:GenralInfoSchema, db: Session = Dep
     db_application = db.query(Application).filter(Application.id == application_id).first()
     if not db_application:
         raise HTTPException(status_code=404, detail="Application not found")
-    db_application.status="Decline"
+    animal = db.query(Animal).filter(Animal.tag_id == db_application.tag_id).first()
+    if not animal:
+        raise HTTPException(status_code=404, detail="Animal not found")
+    db_application.status="Denied"
+    animal.available=True
     db.commit() 
     return {"Success":1}
 @router.get("/form",response_model=dict)
@@ -48,8 +52,8 @@ def get_form(application_id: int, db: Session = Depends(get_db)):
     if not animal:
         raise HTTPException(status_code=404, detail="Animal not found")
     info = db.query(GenralInfo).filter(GenralInfo.application_id == application_id).first()
-    if not animal:
-        raise HTTPException(status_code=404, detail="Animal not found")
+    if not info:
+        raise HTTPException(status_code=404, detail="The Form has not yet be forwarded by PAC")
     return {"meta":{
             "id": application.id,
             "tag_id":animal.tag_id
@@ -71,7 +75,6 @@ def get_form(application_id: int, db: Session = Depends(get_db)):
             "social":animal.caretaker_social,
             "occupation":animal.caretaker_occ,
             "caretaker_image":animal.caretaker_image,
-            "caretaker_doc":animal.caretaker_doc
             },
             "Adoptor":{
             "name": application.adopter_name,

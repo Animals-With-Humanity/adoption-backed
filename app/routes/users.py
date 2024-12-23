@@ -4,6 +4,7 @@ from app.database import get_db
 from app.models import User
 from pydantic import BaseModel
 from typing import List
+import bcrypt
 
 # Create the FastAPI router
 router = APIRouter()
@@ -15,7 +16,8 @@ class UserCreate(BaseModel):
     password: str
 
 class UserLogin(BaseModel):
-    status: str
+    username:str
+    password:str
 
 # Pydantic schema for user response
 class UserResponse(BaseModel):
@@ -29,21 +31,22 @@ class UserResponse(BaseModel):
         orm_mode = True
 
 # Route to create a new user
-@router.post("/users/", response_model=UserResponse)
+@router.post("/users/", response_model=dict)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.name == user.name).first()
     if db_user:
         raise HTTPException(status_code=400, detail="User with this email already exists")
-    
+    bytes=user.password.encode('utf-8')
+    Password=bcrypt.hashpw(bytes,bcrypt.gensalt())
     new_user = User(
         name=user.name,
         role=user.role,
-        password=user.password
+        password=Password
     )
     db.add(new_user)
     db.commit()
     #db.refresh(new_user)
-    return new_user
+    return {"user":user.name,"id":new_user.id,"role":new_user.role,"status":new_user.status}
 
 # Route to get all users
 @router.get("/users/", response_model=List[UserResponse])
@@ -60,16 +63,27 @@ def get_user(user_name: str, db: Session = Depends(get_db)):
     return user
 
 # Route to logi a user entry
-@router.put("/users/{user_id}", response_model=UserResponse)
-def update_user(user_id: int, user: UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.id == user_id).first()
+@router.put("/users/login", response_model=dict)
+def user_login(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.name == user.username).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    db_user.status=user.status
-    db.commit()
-    #db.refresh(db_user)
-    return db_user
+    if bcrypt.checkpw(user.password.encode('utf-8'), db_user.password):
+        db_user.status="Online"
+        db.commit()
+        return {"user":user.username,"details":"loged in sucessfully"}
+    #db.refresh(dser)
+    return {"details":"login failed check password"}
 
+@router.put("/users/logout", response_model=dict)
+def user_logout(user: str, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.name == user).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user.status="Offline"
+    db.commit()
+    return {"user":user,"details":"loged out sucessfully"}
+    
 # Route to delete a user
 @router.delete("/users/{user_id}", response_model=dict)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
