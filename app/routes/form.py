@@ -8,6 +8,7 @@ from app.models import Animal
 from handel_file import adoptor_upload
 # Create the FastAPI router
 class GenralInfoSchema(BaseModel):
+    councler_name:str
     plans: str
     pets : str
     alone: str
@@ -22,6 +23,7 @@ def Approve_request(application_id: int,info:GenralInfoSchema, db: Session = Dep
     info=GenralInfo(
         tag_id=db_application.tag_id,
         application_id=db_application.id,
+        councler_name=info.councler_name,
         plans=info.plans,
         pets=info.pets,
         alone=info.alone,
@@ -82,11 +84,13 @@ def get_form(application_id: int, db: Session = Depends(get_db)):
             "contact": application.contact,
             "whatsapp": application.whatsapp,
             "address": application.Address, 
-            "home_type": application.homeType,  
+            "home_type": application.homeType,
+            "social":application.social,  
             "adopter_image": application.adopter_image,  
             "adopter_doc": application.adopter_doc
             },
-            "Genral Information":{
+            "GenralInformation":{
+                "councler":info.councler_name,
                 "plans":info.plans,
                 "pets":info.pets,
                 "alone":info.alone,
