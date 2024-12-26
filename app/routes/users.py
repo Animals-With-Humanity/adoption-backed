@@ -71,7 +71,7 @@ def user_login(user: UserLogin, db: Session = Depends(get_db)):
     if user.password==db_user.password:  # Pass user.password directly
         db_user.status = "Online"
         db.commit()
-        return {"user": user.username, "details": "logged in successfully"}
+        return {"user": user.username, "details": "logged in successfully","status":1}
     # db.refresh(dser)
     return {"details": "login failed check password"}
 
