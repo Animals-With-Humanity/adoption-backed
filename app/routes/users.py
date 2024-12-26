@@ -41,7 +41,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = User(
         name=user.name,
         role=user.role,
-        password=Password,
+        password=user.password,
         status='Offline'
     )
     db.add(new_user)
@@ -63,18 +63,17 @@ def get_user(user_name: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-# Route to logi a user entry
 @router.put("/users/login", response_model=dict)
 def user_login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.name == user.username).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    if bcrypt.checkpw(user.password.encode('utf-8'), db_user.password):
-        db_user.status="Online"
+    if user.password==db_user.password:  # Pass user.password directly
+        db_user.status = "Online"
         db.commit()
-        return {"user":user.username,"details":"loged in sucessfully"}
-    #db.refresh(dser)
-    return {"details":"login failed check password"}
+        return {"user": user.username, "details": "logged in successfully"}
+    # db.refresh(dser)
+    return {"details": "login failed check password"}
 
 @router.put("/users/logout", response_model=dict)
 def user_logout(user: str, db: Session = Depends(get_db)):
