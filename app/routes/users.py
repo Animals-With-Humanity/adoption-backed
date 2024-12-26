@@ -41,7 +41,8 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = User(
         name=user.name,
         role=user.role,
-        password=Password
+        password=Password,
+        status='Offline'
     )
     db.add(new_user)
     db.commit()

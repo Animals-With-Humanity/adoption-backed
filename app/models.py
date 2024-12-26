@@ -57,6 +57,5 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(225))
     role = Column(String(225))  # Can be 'Admin' or 'Team'
-    password=Column(String(225))
-    status=Column(Enum('Online', 'Offline', name='status_enum'), default='Offline')
-
+    password = Column(String(225))
+    status = Column(String, default='Offline')
