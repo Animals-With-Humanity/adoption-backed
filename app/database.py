@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 # SQLALCHEMY_DATABASE_URL should be changed to your database URL.
 # Example for SQLite:
-SQLALCHEMY_DATABASE_URL = "sqlite:///./app.db"
+SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://neondb_owner:xR7HX1DhlzvF@ep-wandering-scene-a7j5x3ak-pooler.ap-southeast-2.aws.neon.tech/neondb"
 ## Switch to deployment db 
 #"postgresql://neondb_owner:W3FMILeyHkP0@ep-long-union-a5mh444q-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
 # Create the database engine
