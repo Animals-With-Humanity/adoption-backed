@@ -42,8 +42,7 @@ def upload_to_cloudinary(file: UploadFile, folder: str,quality:int=50) -> str:
         upload_result = cloudinary.uploader.upload(
             compressed_image,
             folder=folder,
-            resource_type="image",
-             public_id=original_filename 
+            resource_type="image"
         )
 
         # Return the secure URL of the uploaded image
