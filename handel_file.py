@@ -4,7 +4,7 @@ from fastapi import UploadFile
 import cloudinary
 import cloudinary.uploader
 import io
-
+from pathlib import Path
 # Configure Cloudinary
 cloudinary.config(
     cloud_name="dsm1ingy6",
@@ -18,7 +18,7 @@ def compress_image(file: UploadFile, quality: int = 50) -> io.BytesIO:
     """
     # Read the uploaded file content
     file_content = file.file.read()
-
+   
     # Convert file content to numpy array
     nparr = np.frombuffer(file_content, np.uint8)
 
@@ -37,12 +37,13 @@ def compress_image(file: UploadFile, quality: int = 50) -> io.BytesIO:
 def upload_to_cloudinary(file: UploadFile, folder: str,quality:int=50) -> str:
     try:
         compressed_image = compress_image(file,quality)
-
+        original_filename = Path(file.filename).stem
         # Upload the compressed image to Cloudinary
         upload_result = cloudinary.uploader.upload(
             compressed_image,
             folder=folder,
-            resource_type="image"
+            resource_type="image",
+             public_id=original_filename 
         )
 
         # Return the secure URL of the uploaded image
