@@ -33,8 +33,8 @@ def create_animal(gender: str=Form(...),
                   animal: UploadFile=File(...) ,caretaker_image: UploadFile=File(...) ,
                   db: Session = Depends(get_db)):
     
-    file_url= "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStojBm8VLxBVE0Tjng7MyDjKqgCLVJJ9q-KA2s9joNy2RHWn8MezjmVALmsZhvzKb3tynRl15zfwBmZjnmYBOh0A"#animal_upload(animal)
-    caretaker_image_address="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQG3W2vZAjMKZNvqCzPLssnlYxd116pEKOVRp3kL5NCh8doKhjF_59Q2hzS45Amne0cOKJucJLqaExp0lShLtzYxfHgmZz3iRGLF3CW7_9"#caretaker_upload(caretaker_image)
+    file_url=animal_upload(animal)
+    caretaker_image_address=caretaker_upload(caretaker_image)
     db_animal = Animal(
         gender=gender,
         age=age,

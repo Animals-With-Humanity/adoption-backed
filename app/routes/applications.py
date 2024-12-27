@@ -35,8 +35,8 @@ def create_application(tag_id: int = Form(...),
                        adopter_doc: UploadFile = File(...),
                        incamp: str=Form(...),
                        db: Session = Depends(get_db)):
-    img="https://img.mensxp.com/media/content/2021/Nov/Real-Men-Open-Up-About-The-Pressures-Of-Being-A-Man-And-What-It-Means-Today-1400x653_6193a32da6ab1.jpeg?w=1100&h=513&cc=1"#adoptor_upload(adopter_image)
-    doc="https://www.entrust.com/sites/default/files/2023-12/img-govid-nationalidprograms-600x600.jpg"#adoptor_upload(adopter_doc)
+    img=adoptor_upload(adopter_image)
+    doc=adoptor_upload(adopter_doc)
     db_application = Application(
         tag_id=tag_id,
         adopter_name=name,
