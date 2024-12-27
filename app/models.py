@@ -5,7 +5,7 @@ from app.database import Base
 class Animal(Base):
     __tablename__ = 'animals'
     #id = Column(Integer, primary_key=True, index=True)
-    tag_id = Column(Integer, primary_key=True,unique=True, index=True, autoincrement=True)
+    tag_id = Column(Integer, primary_key=True,unique=True, index=True)
     gender=Column(String,default="Not sure")
     age=Column(Integer)
     fitness=Column(String)
