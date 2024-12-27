@@ -11,7 +11,7 @@ class Animal(Base):
     fitness=Column(String)
     vaccination=Column(Boolean)
     sterilisation=Column(Boolean)
-    animal_type = Column(String(225))
+    animal_type = Column(String)
     caretaker = Column(String,nullable=False)
     contact = Column(String)
     caretaker_whatsapp=Column(String)
@@ -19,7 +19,7 @@ class Animal(Base):
     caretaker_social=Column(String) 
     caretaker_occ=Column(String)
     caretaker_image=Column(String)
-    photos = Column(String(225))
+    photos = Column(String)
     available = Column(Boolean, default=True)
 
 class Application(Base):
