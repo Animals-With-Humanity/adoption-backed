@@ -1,10 +1,11 @@
-import cv2
+import tinify
 import numpy as np
 from fastapi import UploadFile
 import cloudinary
 import cloudinary.uploader
 import io
 
+tinify.key ="KMmB9PmRG6MG87Mmmvn2KdyNZkZYCJW8"
 # Configure Cloudinary
 cloudinary.config(
     cloud_name="dsm1ingy6",
@@ -12,19 +13,18 @@ cloudinary.config(
     api_secret="KDnxt9IF0rUEXresLszPVwRqFhA"
 )
 
-def compress_image(file: UploadFile, quality: int = 50) -> io.BytesIO:
+def compress_image(file: UploadFile) -> bytes:
+    # Read the file's content
     file_content = file.file.read()
-    nparr = np.frombuffer(file_content, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    success, encoded_image = cv2.imencode(".jpg", img, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
-    if not success:
-        raise ValueError("Failed to encode image")
-    return io.BytesIO(encoded_image.tobytes())
 
+    # Compress the file using TinyPNG
+    compressed_content = tinify.from_buffer(file_content).to_buffer()
 
-def upload_to_cloudinary(file: UploadFile, folder: str, quality: int = 50) -> str:
+    return compressed_content
+
+def upload_to_cloudinary(file: UploadFile, folder: str) -> str:
     try:
-        compressed_image = compress_image(file, quality=quality)
+        compressed_image = compress_image(file)
 
         # Upload the compressed image to Cloudinary
         upload_result = cloudinary.uploader.upload(
