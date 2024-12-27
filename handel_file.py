@@ -5,7 +5,6 @@ import cloudinary
 import cloudinary.uploader
 import io
 
-tinify.key ="KMmB9PmRG6MG87Mmmvn2KdyNZkZYCJW8"
 # Configure Cloudinary
 cloudinary.config(
     cloud_name="dsm1ingy6",

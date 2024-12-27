@@ -4,7 +4,6 @@ from app.database import get_db
 from app.models import User
 from pydantic import BaseModel
 from typing import List
-import bcrypt
 
 # Create the FastAPI router
 router = APIRouter()
@@ -36,8 +35,6 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.name == user.name).first()
     if db_user:
         raise HTTPException(status_code=400, detail="User with this email already exists")
-    bytes=user.password.encode('utf-8')
-    Password=bcrypt.hashpw(bytes,bcrypt.gensalt())
     new_user = User(
         name=user.name,
         role=user.role,
