@@ -65,7 +65,7 @@ def create_application(tag_id: int = Form(...),
 @router.get("/applications/", response_model=List[dict])
 def get_all_applications(db: Session = Depends(get_db)):
     applications = db.query(Application).all()
-    return [{"id": app.id, "name": app.adopter_name, "occupation": app.occupation, "tag_id": app.tag_id,"status":app.status} for app in applications]
+    return [{"id": app.id, "name": app.adopter_name,"contact":app.contact,"whatsapp":app.whatsapp, "occupation": app.occupation, "tag_id": app.tag_id,"status":app.status} for app in applications]
 
 # Route to get a single application by ID
 @router.get("/applications/{application_id}", response_model=dict)
