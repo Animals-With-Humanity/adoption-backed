@@ -4,7 +4,7 @@ from app.database import get_db
 from app.models import Animal
 from pydantic import BaseModel
 from typing import List
-from handel_file import animal_upload,caretaker_upload
+from utils import animal_upload,caretaker_upload
 # Create the FastAPI router
 router = APIRouter()
 
