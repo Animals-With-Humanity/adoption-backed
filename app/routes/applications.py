@@ -71,6 +71,7 @@ def get_all_applications(db: Session = Depends(get_db)):
 @router.get("/applications/{application_id}", response_model=dict)
 def get_application(application_id: int, db: Session = Depends(get_db)):
     application = db.query(Application).filter(Application.id == application_id).first()
+    animal=db.query(Animal).filter(Animal.tag_id == Application.tag_id).first()
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
     return {
@@ -84,6 +85,8 @@ def get_application(application_id: int, db: Session = Depends(get_db)):
     "email": application.Email,  
     "adopter_image": application.adopter_image,  
     "adopter_doc": application.adopter_doc,
+    "caretaker":animal.caretaker,
+    "caretaker_contact":animal.contact,
     "status": application.status}
 
 # Route to update an application
