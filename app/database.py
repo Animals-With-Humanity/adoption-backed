@@ -1,13 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-# SQLALCHEMY_DATABASE_URL should be changed to your database URL.
-# Example for SQLite:
-SQLALCHEMY_DATABASE_URL = "postgresql://neondb_owner:1mgEw7aINveG@ep-silent-leaf-a2aecil8-pooler.eu-central-1.aws.neon.tech/neondb"
-## Switch to deployment db 
-#"postgresql://neondb_owner:W3FMILeyHkP0@ep-long-union-a5mh444q-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
-# Create the database engine
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "default") 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False} if "sqlite" in SQLALCHEMY_DATABASE_URL else {}

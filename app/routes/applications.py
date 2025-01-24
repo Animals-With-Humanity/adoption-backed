@@ -1,142 +1,165 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File,Request,Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models import Application
+from app.models import Lead, Animal,Caretaker
 from pydantic import BaseModel
 from typing import List
-from app.models import Animal
 from utils import adoptor_upload
+
 # Create the FastAPI router
 router = APIRouter()
 
-# Pydantic schema for an application
-class ApplicationCreate(BaseModel):
-    tag_id: int
-    name: str
-    contact: str
-    whatsapp: str
-    address: str    
-    occupation: str
-    pets: bool
-    hometype: str
+# Pydantic schema for updating application status
 class ApplicationUpdate(BaseModel):
-    status:str
+    status: str
 
 # Route to create a new application
 @router.post("/applications/", response_model=dict)
-def create_application(tag_id: int = Form(...),
-                       name: str = Form(...),
-                       contact: str = Form(...),
-                       whatsapp: str = Form(...),
-                       address: str = Form(...),
-                       occupation: str = Form(...),
-                       email: str = Form(...), 
-                       adopter_image: UploadFile = File(...),
-                       adopter_doc: UploadFile = File(...),
-                       incamp: str=Form(...),
-                       db: Session = Depends(get_db)):
-    img=adoptor_upload(adopter_image)
-    doc=adoptor_upload(adopter_doc)
-    db_application = Application(
-        tag_id=tag_id,
+def create_application(
+    animal_tag_id: str = Form(...),
+    name: str = Form(...),
+    contact: str = Form(...),
+    whatsapp: str = Form(...),
+    address: str = Form(...),
+    address_permanent: str=Form(...),
+    house_type: str=Form(...),
+    occupation: str = Form(...),
+    email: str = Form(...),
+    social: str = Form(...),
+    adopter_image: UploadFile = File(...),
+    adopter_doc_front: UploadFile = File(...),
+    adopter_doc_back: UploadFile = File(...),
+    incamp: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    # Upload adopter images
+    img_url = adoptor_upload(adopter_image)
+    front_url = adoptor_upload(adopter_doc_front)
+    back_url = adoptor_upload(adopter_doc_back)
+    db_animal = db.query(Animal).filter(Animal.tag_id == animal_tag_id).first()
+    if not db_animal:
+        raise HTTPException(status_code=404, detail="Animal not found")
+    db_animal.avaliable = False
+    # Create a new lead entry
+    db_lead = Lead(
+        tag_id=animal_tag_id,
         adopter_name=name,
         contact=contact,
         whatsapp=whatsapp,
         Address=address,
+        Address_permanent=address_permanent,
         occupation=occupation,
         Email=email,
-        adopter_image=img,
-        adopter_doc=doc,
+        social=social,
+        homeType=house_type,
+        adopter_image=img_url,
+        adopter_doc_front=front_url,
+        adopter_doc_back=back_url,
         incamp=incamp,
-        status="Pending"
-        )
-    db.add(db_application)
-    #db.commit()
-    db_animal = db.query(Animal).filter(Animal.tag_id == tag_id).first()
-    if not db_animal:
-        raise HTTPException(status_code=404, detail="Animal not found") 
-    db_animal.available=False
+        status="Pending",
+    )
+    db.add(db_lead)
     db.commit()
+    db.refresh(db_lead)
 
-    #db.refresh(db_application)
-    return {"message": "Application created successfully", "application_id": db_application.id}
+    return {"message": "Application created successfully", "application_id": db_lead.id}
 
 # Route to get all applications
 @router.get("/applications/", response_model=List[dict])
 def get_all_applications(db: Session = Depends(get_db)):
-    applications = db.query(Application).all()
-    return [{"id": app.id, "name": app.adopter_name,"contact":app.contact,"whatsapp":app.whatsapp, "occupation": app.occupation, "tag_id": app.tag_id,"status":app.status} for app in applications]
+    leads = db.query(Lead).all()
+    return [
+        {
+            "id": lead.id,
+            "animal_tag_id": lead.tag_id,
+            "name": lead.adopter_name,
+            "contact": lead.contact,
+            "whatsapp": lead.whatsapp,
+            "occupation": lead.occupation,
+            "status": lead.status,
+        }
+        for lead in leads
+    ]
 
 # Route to get a single application by ID
 @router.get("/applications/{application_id}", response_model=dict)
 def get_application(application_id: int, db: Session = Depends(get_db)):
-    application = db.query(Application).filter(Application.id == application_id).first()
-    animal=db.query(Animal).filter(Animal.tag_id == Application.tag_id).first()
-    if not application:
+    lead = db.query(Lead).filter(Lead.id == application_id).first()
+    if not lead:
         raise HTTPException(status_code=404, detail="Application not found")
+
+    animal = db.query(Animal).filter(Animal.tag_id == lead.tag_id).first()
+    caretaker=db.query(Caretaker).filter(Caretaker.id==animal.caretaker_id).first()
     return {
-    "id": application.id,
-    "name": application.adopter_name,
-    "occupation": application.occupation,
-    "animal_id": application.tag_id,
-    "contact": application.contact,
-    "whatsapp": application.whatsapp,
-    "address": application.Address,  
-    "email": application.Email,  
-    "adopter_image": application.adopter_image,  
-    "adopter_doc": application.adopter_doc,
-    "caretaker":animal.caretaker,
-    "caretaker_contact":animal.contact,
-    "status": application.status}
+        "id": lead.id,
+        "name": lead.adopter_name,
+        "occupation": lead.occupation,
+        "animal_id": lead.tag_id,
+        "contact": lead.contact,
+        "whatsapp": lead.whatsapp,
+        "address": lead.Address,
+        "address_permanent":lead.Address_permanent,
+        "email": lead.Email,
+        "social": lead.social,
+        "adopter_image": lead.adopter_image,
+        "adopter_doc_front": lead.adopter_doc_front,
+        "adopter_doc_back": lead.adopter_doc_back,
+        "status": lead.status,
+        "remarks":lead.remarks,
+        "animal_details": {
+            "id": animal.id,
+            "type": animal.animal_type,
+            "photos": animal.photos,
+            "avaliable": animal.avaliable,
+        },
+        "caretaker_details":{
+            "id":caretaker.id,
+            "name":caretaker.name,
+            "Contact_number":caretaker.contact,
+            "whatsapp": caretaker.caretaker_whatsapp
+            }
+    }
 
 # Route to update an application
-@router.put("/applications/{tag_id}", response_model=dict)
-def update_application(tag_id: int,id:int, application: ApplicationUpdate, db: Session = Depends(get_db)):
-    db_application = db.query(Application).filter(Application.tag_id == tag_id).first()
-    animal=db.query(Animal).filter(Animal.tag_id==tag_id).first()
-    data={}
-    if not db_application:
+@router.put("/applications/{application_id}", response_model=dict)
+def update_application( 
+    application_id: int, application: ApplicationUpdate, db: Session = Depends(get_db)
+):
+    db_lead = db.query(Lead).filter(Lead.id == application_id).first()
+    if not db_lead:
         raise HTTPException(status_code=404, detail="Application not found")
+
+    animal = db.query(Animal).filter(Animal.id == db_lead.animal_id).first()
+
     if application.status == "Approved":
-        data={"tag_id":animal.tag_id,
-            "age":animal.age,
-            "type":animal.animal_type,
-            "gender":animal.gender,
-            "fitness":animal.fitness,
-            "sterilisation":animal.sterilisation,
-            "vaccination":animal.vaccination,
-            "caretaker":animal.caretaker,
-            "contact":animal.contact,
-            "photos":animal.photos,
-            "avaliable":animal.available,
-            "id": db_application.id,
-            "name": db_application.adopter_name,
-            "occupation": db_application.occupation,
-            "animal_id": db_application.tag_id,
-            "contact": db_application.contact,
-            "whatsapp": db_application.whatsapp,
-            "address": db_application.Address,  
-            "pets": db_application.pets,
-            "home_type": db_application.homeType,  
-            "adopter_image": db_application.adopter_image,  
-            "adopter_doc": db_application.adopter_doc,
-            "status": db_application.status}
-        print("create and upload form")
-    elif application.status=="Denied":
-        db_animal = db.query(Animal).filter(Animal.tag_id == tag_id).first()
-        db_animal.available=True
-    db_application.status = application.status
+        db_lead.status = "Approved"
+        # Here, you can implement additional logic like generating forms or notifications.
+
+    elif application.status == "Denied":
+        db_lead.status = "Denied"
+        # Make the animal avaliable again if denied.
+        if animal:
+            animal.avaliable = True
+
+    elif application.status == "Cancled":
+        db_lead.status = "Cancled"
+        if animal:
+            animal.avaliable = True
+
+    else:
+        db_lead.status = "Pending"
+
     db.commit()
-    #db.refresh(db_application)
-    return data
-    #return {"message": "Application updated successfully", "application_id": db_application.id}
+    db.refresh(db_lead)
+    return {"message": "Application updated successfully", "application_id": db_lead.id}
 
 # Route to delete an application
 @router.delete("/applications/{application_id}", response_model=dict)
 def delete_application(application_id: int, db: Session = Depends(get_db)):
-    db_application = db.query(Application).filter(Application.id == application_id).first()
-    if not db_application:
+    db_lead = db.query(Lead).filter(Lead.id == application_id).first()
+    if not db_lead:
         raise HTTPException(status_code=404, detail="Application not found")
-    db.delete(db_application)
+
+    db.delete(db_lead)
     db.commit()
     return {"message": "Application deleted successfully"}

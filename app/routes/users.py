@@ -4,7 +4,12 @@ from app.database import get_db
 from app.models import User
 from pydantic import BaseModel
 from typing import List
+from utils import hash_password,verify_password,genrate_auth_token
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+AUTH_KEY=os.getenv("AUTH_KEY_GEN",None)
 # Create the FastAPI router
 router = APIRouter()
 
@@ -35,10 +40,11 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.name == user.name).first()
     if db_user:
         raise HTTPException(status_code=400, detail="User with this email already exists")
+    password=hash_password(user.password)
     new_user = User(
         name=user.name,
         role=user.role,
-        password=user.password,
+        password=password,
         status='Offline'
     )
     db.add(new_user)
@@ -53,22 +59,23 @@ def get_all_users(db: Session = Depends(get_db)):
     return users
 
 # Route to get a single user by ID
-@router.get("/users/{user_name}", response_model=UserResponse)
+@router.get("/users/{user_name}", response_model=dict)
 def get_user(user_name: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.name == user_name).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return {"status":user.status,"auth_token":user.auth_token}
 
 @router.put("/users/login", response_model=dict)
 def user_login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.name == user.username).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    if user.password==db_user.password:  # Pass user.password directly
+    if verify_password(user.password,db_user.password):
         db_user.status = "Online"
+        db_user.auth_token=genrate_auth_token(AUTH_KEY)
         db.commit()
-        return {"user": user.username, "details": "logged in successfully","status":1}
+        return {"user": user.username,"auth_token":db_user.auth_token, "details": "logged in successfully","status":1}
     # db.refresh(dser)
     return {"details": "login failed check password"}
 

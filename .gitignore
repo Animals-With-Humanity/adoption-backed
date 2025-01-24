@@ -1,4 +1,6 @@
 prod
+.env
+test.db
 __pycache__
 app/__pycache__/database.cpython-310.pyc
 app/__pycache__/database.cpython-310.pyc
